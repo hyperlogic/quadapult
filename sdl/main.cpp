@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     if (!screen)
         fprintf(stderr, "Couldn't create SDL screen!\n");
 
-    QUADAPULT_Init();
+    QUADAPULT_Init("./");
 
     int done = 0;
     while (!done)

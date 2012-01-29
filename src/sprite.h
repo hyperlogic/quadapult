@@ -2,11 +2,15 @@
 #define SPRITE_H
 
 #include "abaci.h"
+#include "texture.h"
+
+class Texture;
 
 class Sprite
 {
 public:
     Sprite();
+    ~Sprite();
 
     void SetColor(const Vector4f& color);
     const Vector4f& GetColor() const;
@@ -23,6 +27,8 @@ public:
     void SetDepth(float depth);
     float GetDepth() const;
 
+    void SetTexture(Texture* texture);
+
     void Draw() const;
 
 protected:
@@ -31,6 +37,7 @@ protected:
     Vector2f m_position;
     Vector2f m_size;
     float m_depth;
+    Texture* m_texture;
 };
 
 #endif

@@ -3,23 +3,26 @@
 #include <string>
 #include <vector>
 #include "sprite.h"
-
-#if defined DARWIN
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined IOS
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#include <GL/glu.h>
-#endif
+#include "render.h"
+#include "texture.h"
 
 std::vector<Sprite*> s_spriteVec;
+std::vector<Texture*> s_textureVec;
 
-void QUADAPULT_Init()
+void QUADAPULT_Init(const char* path)
 {
+    RenderInit();
+
+    static const char* textureArray[] = {"texture/happy.tga", "texture/sad.tga", 0};
+
+    Texture::SetSearchPath(path);
+    for (int i = 0; textureArray[i] != 0; ++i)
+    {
+        Texture* texture = new Texture();
+        texture->LoadFromFile(textureArray[i], Texture::FlipVertical);
+        s_textureVec.push_back(texture);
+    }
+
     const int NUM_SPRITES = 1000;
     s_spriteVec.reserve(NUM_SPRITES);
     for (int i = 0; i < NUM_SPRITES; ++i)
@@ -30,6 +33,7 @@ void QUADAPULT_Init()
         sprite->SetPosition(Vector2f(RandomScalar(0.0f, 768.0f), RandomScalar(0.0f, 1024.0f)));
         sprite->SetDepth(RandomScalar(0.0f, 1.0f));
         sprite->SetSize(Vector2f(RandomScalar(10.0f, 600.0f), RandomScalar(0.1f, 80.0f)));
+        sprite->SetTexture(s_textureVec[RandomInt(0, s_textureVec.size() - 1)]);
         s_spriteVec.push_back(sprite);
     }
 
@@ -40,6 +44,7 @@ void QUADAPULT_Init()
     glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void QUADAPULT_Update(float dt)
@@ -62,5 +67,6 @@ void QUADAPULT_Draw()
 
 void QUADAPULT_Shutdown()
 {
-
+    // TODO: unref textures
+    // TODO: delete sprites
 }

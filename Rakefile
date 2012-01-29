@@ -22,7 +22,12 @@ $L_FLAGS = [`sdl-config --libs`.chomp,
 $OBJECTS = ['sdl/SDLMain.o',
             'sdl/main.o',
             'src/quadapult.o',
-            'src/sprite.o'];
+            'src/sprite.o',
+            'src/render.o',
+            'src/texture.o',
+            'src/image.o',
+            'src/refbase.o',
+            'src/tga.o'];
 
 $DEPS = $OBJECTS.map {|f| f[0..-3] + '.d'}
 $EXE = 'quadapult'

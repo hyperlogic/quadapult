@@ -1,21 +1,16 @@
 #include "sprite.h"
 #include <stdint.h>
+#include "render.h"
 
-#if defined DARWIN
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined IOS
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#include <GL/glu.h>
-#endif
-
-Sprite::Sprite()
+Sprite::Sprite() : m_texture(0)
 {
 
+}
+
+Sprite::~Sprite()
+{
+    if (m_texture)
+        m_texture->UnRef();
 }
 
 void Sprite::SetColor(const Vector4f& color)
@@ -73,6 +68,17 @@ float Sprite::GetDepth() const
     return m_depth;
 }
 
+void Sprite::SetTexture(Texture* texture)
+{
+    if (texture)
+        texture->Ref();
+
+    if (m_texture)
+        m_texture->UnRef();
+
+    m_texture = texture;
+}
+
 void Sprite::Draw() const
 {
     glColor4f(m_color[0], m_color[1], m_color[2], m_color[3]);
@@ -89,6 +95,17 @@ void Sprite::Draw() const
 
     glVertexPointer(2, GL_FLOAT, 0, verts);
     glEnableClientState(GL_VERTEX_ARRAY);
+
+    static float uvs[] = {0, 0, 1, 0, 0, 1, 1, 1};
+
+    // assume glEnable(GL_TEXTURE2D);
+    glClientActiveTexture(GL_TEXTURE0);
+    glTexCoordPointer(2, GL_FLOAT, 0, uvs);
+
+    glActiveTexture(GL_TEXTURE0);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glBindTexture(GL_TEXTURE_2D, m_texture->GetTexture());
 
     static uint16_t indices[] = {0, 2, 1, 2, 3, 1};
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
