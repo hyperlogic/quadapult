@@ -1,4 +1,17 @@
 #include "sprite.h"
+#include <stdint.h>
+
+#if defined DARWIN
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#elif defined IOS
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glu.h>
+#endif
 
 Sprite::Sprite()
 {
@@ -62,5 +75,21 @@ float Sprite::GetDepth() const
 
 void Sprite::Draw() const
 {
+    glColor4f(m_color[0], m_color[1], m_color[2], m_color[3]);
 
+    float verts[8];
+    verts[0] = m_position.x;
+    verts[1] = m_position.y;
+    verts[2] = m_position.x + m_size.x;
+    verts[3] = m_position.y;
+    verts[4] = m_position.x;
+    verts[5] = m_position.y + m_size.y;
+    verts[6] = m_position.x + m_size.x;
+    verts[7] = m_position.y + m_size.y;
+
+    glVertexPointer(2, GL_FLOAT, 0, verts);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    static uint16_t indices[] = {0, 2, 1, 2, 3, 1};
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }

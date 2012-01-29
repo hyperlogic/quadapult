@@ -8,8 +8,8 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #elif defined IOS
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -27,10 +27,19 @@ void QUADAPULT_Init()
         Sprite* sprite = new Sprite();
         sprite->SetColor(Vector4f(RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f),
                                   RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f)));
-        sprite->SetPosition(Vector2f(RandomScalar(0.0f, 800.0f), RandomScalar(0.0f, 600.0f)));
+        sprite->SetPosition(Vector2f(RandomScalar(0.0f, 768.0f), RandomScalar(0.0f, 1024.0f)));
         sprite->SetDepth(RandomScalar(0.0f, 1.0f));
+        sprite->SetSize(Vector2f(RandomScalar(10.0f, 600.0f), RandomScalar(0.1f, 80.0f)));
         s_spriteVec.push_back(sprite);
     }
+
+    Matrixf proj = Matrixf::Ortho(0, 768, 1024, 0, -10, 10);
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(reinterpret_cast<float*>(&proj));
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void QUADAPULT_Update(float dt)

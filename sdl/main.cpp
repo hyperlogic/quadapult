@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
 
 	// TODO: get this from config file.
-    Config config(false, false, 800, 600);
+    Config config(false, false, 768, 1024);
     config.title = "Quadapult";
 
     // msaa
