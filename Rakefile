@@ -1,9 +1,12 @@
+# build quadapult sdl version
+
 require 'rake/clean'
 
 $C_FLAGS = ['-Wall',
             `sdl-config --cflags`.chomp,
             '-DDARWIN',
-            "-I#{File.expand_path('src')}"];
+            "-I#{File.expand_path('src')}",
+            "-I#{File.expand_path('abaci/src')}"];
 
 $DEBUG_C_FLAGS = ['-g'];
 
@@ -16,8 +19,10 @@ $L_FLAGS = [`sdl-config --libs`.chomp,
             '-framework CoreServices',
             '-framework ApplicationServices'];
 
-$OBJECTS = ['src/SDLMain.o',
-            'src/quadapult.o'];
+$OBJECTS = ['sdl/SDLMain.o',
+            'sdl/main.o',
+            'src/quadapult.o',
+            'src/sprite.o'];
 
 $DEPS = $OBJECTS.map {|f| f[0..-3] + '.d'}
 $EXE = 'quadapult'

@@ -1,2 +1,9 @@
 # ignore exe
-quadapult
+/quadapult
+
+*.o
+*.d
+
+# xcode
+project.xcworkspace/
+xcuserdata/

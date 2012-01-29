@@ -1,0 +1,352 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6D1A5F0D14D502B10067524D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F0C14D502B10067524D /* UIKit.framework */; };
+		6D1A5F0F14D502B10067524D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F0E14D502B10067524D /* Foundation.framework */; };
+		6D1A5F1114D502B10067524D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F1014D502B10067524D /* CoreGraphics.framework */; };
+		6D1A5F1314D502B10067524D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F1214D502B10067524D /* GLKit.framework */; };
+		6D1A5F1514D502B10067524D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F1414D502B10067524D /* OpenGLES.framework */; };
+		6D1A5F1B14D502B10067524D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F1914D502B10067524D /* InfoPlist.strings */; };
+		6D1A5F1D14D502B10067524D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D1A5F1C14D502B10067524D /* main.m */; };
+		6D1A5F2114D502B10067524D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2014D502B10067524D /* AppDelegate.m */; };
+		6D1A5F2314D502B10067524D /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2214D502B10067524D /* Shader.fsh */; };
+		6D1A5F2514D502B10067524D /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2414D502B10067524D /* Shader.vsh */; };
+		6D1A5F2814D502B10067524D /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2714D502B10067524D /* ViewController.mm */; };
+		6D1A5F2B14D502B10067524D /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2914D502B10067524D /* ViewController_iPhone.xib */; };
+		6D1A5F2E14D502B10067524D /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2C14D502B10067524D /* ViewController_iPad.xib */; };
+		6DCDB9F014D503E200ADE8E3 /* quadapult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DCDB9ED14D503E200ADE8E3 /* quadapult.cpp */; };
+		6DCDB9F114D503E200ADE8E3 /* sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DCDB9EE14D503E200ADE8E3 /* sprite.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6D1A5F0814D502B10067524D /* quadapult.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = quadapult.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D1A5F0C14D502B10067524D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6D1A5F0E14D502B10067524D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6D1A5F1014D502B10067524D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6D1A5F1214D502B10067524D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		6D1A5F1414D502B10067524D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		6D1A5F1814D502B10067524D /* quadapult-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "quadapult-Info.plist"; sourceTree = "<group>"; };
+		6D1A5F1A14D502B10067524D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6D1A5F1C14D502B10067524D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6D1A5F1E14D502B10067524D /* quadapult-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "quadapult-Prefix.pch"; sourceTree = "<group>"; };
+		6D1A5F1F14D502B10067524D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		6D1A5F2014D502B10067524D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6D1A5F2214D502B10067524D /* Shader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
+		6D1A5F2414D502B10067524D /* Shader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = Shaders/Shader.vsh; sourceTree = "<group>"; };
+		6D1A5F2614D502B10067524D /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		6D1A5F2714D502B10067524D /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
+		6D1A5F2A14D502B10067524D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
+		6D1A5F2D14D502B10067524D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPad.xib; sourceTree = "<group>"; };
+		6DCDB9ED14D503E200ADE8E3 /* quadapult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = quadapult.cpp; path = ../src/quadapult.cpp; sourceTree = "<group>"; };
+		6DCDB9EE14D503E200ADE8E3 /* sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sprite.cpp; path = ../src/sprite.cpp; sourceTree = "<group>"; };
+		6DCDB9EF14D503E200ADE8E3 /* sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sprite.h; path = ../src/sprite.h; sourceTree = "<group>"; };
+		6DCDB9F314D503FE00ADE8E3 /* abaci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abaci.h; path = ../abaci/src/abaci.h; sourceTree = "<group>"; };
+		6DCDB9F614D505EC00ADE8E3 /* abaciinlines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = abaciinlines.cpp; path = ../abaci/src/abaciinlines.cpp; sourceTree = "<group>"; };
+		6DCDB9F814D50CA900ADE8E3 /* quadapult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quadapult.h; path = ../src/quadapult.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6D1A5F0514D502B10067524D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D1A5F0D14D502B10067524D /* UIKit.framework in Frameworks */,
+				6D1A5F0F14D502B10067524D /* Foundation.framework in Frameworks */,
+				6D1A5F1114D502B10067524D /* CoreGraphics.framework in Frameworks */,
+				6D1A5F1314D502B10067524D /* GLKit.framework in Frameworks */,
+				6D1A5F1514D502B10067524D /* OpenGLES.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6D1A5EFD14D502B10067524D = {
+			isa = PBXGroup;
+			children = (
+				6DCDB9F214D503EB00ADE8E3 /* abaci */,
+				6DCDB9EC14D503C900ADE8E3 /* src */,
+				6D1A5F1614D502B10067524D /* quadapult-ios */,
+				6D1A5F0B14D502B10067524D /* Frameworks */,
+				6D1A5F0914D502B10067524D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6D1A5F0914D502B10067524D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D1A5F0814D502B10067524D /* quadapult.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D1A5F0B14D502B10067524D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6D1A5F0C14D502B10067524D /* UIKit.framework */,
+				6D1A5F0E14D502B10067524D /* Foundation.framework */,
+				6D1A5F1014D502B10067524D /* CoreGraphics.framework */,
+				6D1A5F1214D502B10067524D /* GLKit.framework */,
+				6D1A5F1414D502B10067524D /* OpenGLES.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6D1A5F1614D502B10067524D /* quadapult-ios */ = {
+			isa = PBXGroup;
+			children = (
+				6D1A5F1F14D502B10067524D /* AppDelegate.h */,
+				6D1A5F2014D502B10067524D /* AppDelegate.m */,
+				6D1A5F2214D502B10067524D /* Shader.fsh */,
+				6D1A5F2414D502B10067524D /* Shader.vsh */,
+				6D1A5F2614D502B10067524D /* ViewController.h */,
+				6D1A5F2714D502B10067524D /* ViewController.mm */,
+				6D1A5F2914D502B10067524D /* ViewController_iPhone.xib */,
+				6D1A5F2C14D502B10067524D /* ViewController_iPad.xib */,
+				6D1A5F1714D502B10067524D /* Supporting Files */,
+			);
+			name = "quadapult-ios";
+			path = quadapult;
+			sourceTree = "<group>";
+		};
+		6D1A5F1714D502B10067524D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6D1A5F1814D502B10067524D /* quadapult-Info.plist */,
+				6D1A5F1914D502B10067524D /* InfoPlist.strings */,
+				6D1A5F1C14D502B10067524D /* main.m */,
+				6D1A5F1E14D502B10067524D /* quadapult-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6DCDB9EC14D503C900ADE8E3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				6DCDB9F814D50CA900ADE8E3 /* quadapult.h */,
+				6DCDB9ED14D503E200ADE8E3 /* quadapult.cpp */,
+				6DCDB9EE14D503E200ADE8E3 /* sprite.cpp */,
+				6DCDB9EF14D503E200ADE8E3 /* sprite.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		6DCDB9F214D503EB00ADE8E3 /* abaci */ = {
+			isa = PBXGroup;
+			children = (
+				6DCDB9F614D505EC00ADE8E3 /* abaciinlines.cpp */,
+				6DCDB9F314D503FE00ADE8E3 /* abaci.h */,
+			);
+			name = abaci;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6D1A5F0714D502B10067524D /* quadapult */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D1A5F3114D502B10067524D /* Build configuration list for PBXNativeTarget "quadapult" */;
+			buildPhases = (
+				6D1A5F0414D502B10067524D /* Sources */,
+				6D1A5F0514D502B10067524D /* Frameworks */,
+				6D1A5F0614D502B10067524D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = quadapult;
+			productName = quadapult;
+			productReference = 6D1A5F0814D502B10067524D /* quadapult.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6D1A5EFF14D502B10067524D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 6D1A5F0214D502B10067524D /* Build configuration list for PBXProject "quadapult" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6D1A5EFD14D502B10067524D;
+			productRefGroup = 6D1A5F0914D502B10067524D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6D1A5F0714D502B10067524D /* quadapult */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6D1A5F0614D502B10067524D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D1A5F1B14D502B10067524D /* InfoPlist.strings in Resources */,
+				6D1A5F2314D502B10067524D /* Shader.fsh in Resources */,
+				6D1A5F2514D502B10067524D /* Shader.vsh in Resources */,
+				6D1A5F2B14D502B10067524D /* ViewController_iPhone.xib in Resources */,
+				6D1A5F2E14D502B10067524D /* ViewController_iPad.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6D1A5F0414D502B10067524D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D1A5F1D14D502B10067524D /* main.m in Sources */,
+				6D1A5F2114D502B10067524D /* AppDelegate.m in Sources */,
+				6D1A5F2814D502B10067524D /* ViewController.mm in Sources */,
+				6DCDB9F014D503E200ADE8E3 /* quadapult.cpp in Sources */,
+				6DCDB9F114D503E200ADE8E3 /* sprite.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		6D1A5F1914D502B10067524D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D1A5F1A14D502B10067524D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6D1A5F2914D502B10067524D /* ViewController_iPhone.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D1A5F2A14D502B10067524D /* en */,
+			);
+			name = ViewController_iPhone.xib;
+			sourceTree = "<group>";
+		};
+		6D1A5F2C14D502B10067524D /* ViewController_iPad.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D1A5F2D14D502B10067524D /* en */,
+			);
+			name = ViewController_iPad.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6D1A5F2F14D502B10067524D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6D1A5F3014D502B10067524D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6D1A5F3214D502B10067524D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "quadapult/quadapult-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "IOS=1";
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				HEADER_SEARCH_PATHS = "src/**";
+				INFOPLIST_FILE = "quadapult/quadapult-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6D1A5F3314D502B10067524D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "quadapult/quadapult-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"NDEBUG=1",
+					"IOS=1",
+				);
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				HEADER_SEARCH_PATHS = "src/**";
+				INFOPLIST_FILE = "quadapult/quadapult-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6D1A5F0214D502B10067524D /* Build configuration list for PBXProject "quadapult" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D1A5F2F14D502B10067524D /* Debug */,
+				6D1A5F3014D502B10067524D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6D1A5F3114D502B10067524D /* Build configuration list for PBXNativeTarget "quadapult" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D1A5F3214D502B10067524D /* Debug */,
+				6D1A5F3314D502B10067524D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6D1A5EFF14D502B10067524D /* Project object */;
+}
