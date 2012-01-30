@@ -13,7 +13,8 @@ void QUADAPULT_Init(const char* path)
 {
     RenderInit();
 
-    static const char* textureArray[] = {"texture/happy.tga", "texture/sad.tga", 0};
+    const int NUM_TEXTURES = 3;
+    static const char* textureArray[NUM_TEXTURES + 1] = {"texture/happy.tga", "texture/sad.tga", "texture/t.tga", 0};
 
     Texture::SetSearchPath(path);
     for (int i = 0; textureArray[i] != 0; ++i)
@@ -23,7 +24,7 @@ void QUADAPULT_Init(const char* path)
         s_textureVec.push_back(texture);
     }
 
-    const int NUM_SPRITES = 1000;
+    const int NUM_SPRITES = 4000;
     s_spriteVec.reserve(NUM_SPRITES);
     for (int i = 0; i < NUM_SPRITES; ++i)
     {
@@ -32,8 +33,9 @@ void QUADAPULT_Init(const char* path)
                                   RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f)));
         sprite->SetPosition(Vector2f(RandomScalar(0.0f, 768.0f), RandomScalar(0.0f, 1024.0f)));
         sprite->SetDepth(RandomScalar(0.0f, 1.0f));
-        sprite->SetSize(Vector2f(RandomScalar(10.0f, 600.0f), RandomScalar(0.1f, 80.0f)));
-        sprite->SetTexture(s_textureVec[RandomInt(0, s_textureVec.size() - 1)]);
+        sprite->SetSize(Vector2f(RandomScalar(10.0f, 20.0f), RandomScalar(0.1f, 10.0f)));
+        sprite->SetTexture(s_textureVec[i % NUM_TEXTURES]);
+        //sprite->SetTexture(s_textureVec[0]);
         s_spriteVec.push_back(sprite);
     }
 
