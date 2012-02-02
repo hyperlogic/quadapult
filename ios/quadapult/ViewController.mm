@@ -11,7 +11,6 @@
 #include "quadapult.h"
 
 @interface ViewController () {
-
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -23,12 +22,10 @@
 @implementation ViewController
 
 @synthesize context = _context;
-//@synthesize effect = _effect;
 
 - (void)dealloc
 {
     [_context release];
-//    [_effect release];
     [super dealloc];
 }
 
@@ -45,6 +42,8 @@
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+
+    self.preferredFramesPerSecond = 60;
 
     [self setupGL];
 }

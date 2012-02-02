@@ -32,6 +32,16 @@ public:
 
     void Draw() const;
 
+    void PushBack(std::vector<float>& vertVec,
+                  std::vector<uint8_t>& colorVec,
+                  std::vector<float>& uvVec,
+                  std::vector<uint16_t>& indexVec) const;
+
+    static void DrawVecs(std::vector<float>& vertVec,
+                         std::vector<uint8_t>& colorVec,
+                         std::vector<float>& uvVec,
+                         std::vector<uint16_t>& indexVec);
+
 protected:
 
     Vector4f m_color;

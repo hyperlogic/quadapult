@@ -14,6 +14,7 @@ SortAndSweep s_sortAndSweep;
 void QUADAPULT_Init(const char* path)
 {
     RenderInit();
+    srand(10);
 
     const int NUM_TEXTURES = 3;
     static const char* textureArray[NUM_TEXTURES + 1] = {"texture/happy.tga", "texture/sad.tga", "texture/t.tga", 0};
@@ -24,14 +25,19 @@ void QUADAPULT_Init(const char* path)
     for (int i = 0; textureArray[i] != 0; ++i)
     {
         Texture* texture = new Texture();
+        texture->SetMinFilter(GL_LINEAR);
+        texture->SetMagFilter(GL_LINEAR);
+        texture->SetSWrap(GL_CLAMP_TO_EDGE);
+        texture->SetTWrap(GL_CLAMP_TO_EDGE);
         texture->LoadFromFile(textureArray[i], Texture::FlipVertical);
         s_textureVec.push_back(texture);
     }
 
+
 	const float WIDTH = 320.0f;
 	const float HEIGHT = 480.0f;
-
     const int NUM_SPRITES = 2;
+
     s_spriteVec.reserve(NUM_SPRITES);
     for (int i = 0; i < NUM_SPRITES; ++i)
     {
@@ -71,8 +77,8 @@ void QUADAPULT_Draw()
     glClearColor(0, 0, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+#if 1
 	GLuint curTex = -1;
-
 	int numTextureBinds = 0;
 
     // draw unsorted sprites.
@@ -91,6 +97,33 @@ void QUADAPULT_Draw()
 		s_spriteVec[i]->Draw();
 	}
 	//printf("numTextureBinds = %d\n", numTextureBinds);
+#else
+    // batched drawing.
+    static std::vector<float> vertVec;
+    static std::vector<uint8_t> colorVec;
+    static std::vector<float> uvVec;
+    static std::vector<uint16_t> indexVec;
+
+    glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
+
+    const int MAX_BATCH_SIZE = 20;  // triangles.
+    const int numSprites = s_spriteVec.size();
+    for (int i = 0; i < numSprites; ++i)
+    {
+        if (indexVec.size() > MAX_BATCH_SIZE * 3 + 2)
+        {
+            // flush
+            glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
+            Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
+        }
+        s_spriteVec[i]->PushBack(vertVec, colorVec, uvVec, indexVec);
+    }
+
+    // flush
+    glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
+    Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
+
+#endif
 }
 
 void QUADAPULT_Shutdown()
