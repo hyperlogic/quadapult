@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24A43F6714DA2B640002652E /* sortandsweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24A43F6514DA2B640002652E /* sortandsweep.cpp */; };
 		6D1A5F0D14D502B10067524D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F0C14D502B10067524D /* UIKit.framework */; };
 		6D1A5F0F14D502B10067524D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F0E14D502B10067524D /* Foundation.framework */; };
 		6D1A5F1114D502B10067524D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D1A5F1014D502B10067524D /* CoreGraphics.framework */; };
@@ -31,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		24A43F6514DA2B640002652E /* sortandsweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sortandsweep.cpp; path = ../src/sortandsweep.cpp; sourceTree = "<group>"; };
+		24A43F6614DA2B640002652E /* sortandsweep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sortandsweep.h; path = ../src/sortandsweep.h; sourceTree = "<group>"; };
 		6D1A5F0814D502B10067524D /* quadapult.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = quadapult.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D1A5F0C14D502B10067524D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6D1A5F0E14D502B10067524D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -147,6 +150,8 @@
 		6DCDB9EC14D503C900ADE8E3 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				24A43F6514DA2B640002652E /* sortandsweep.cpp */,
+				24A43F6614DA2B640002652E /* sortandsweep.h */,
 				6D7CE91814D60CD000F84BAB /* tga.cpp */,
 				6D7CE91914D60CD000F84BAB /* tga.h */,
 				6D7CE91214D5D58B00F84BAB /* render.cpp */,
@@ -250,6 +255,7 @@
 				6D7CE91614D5D58B00F84BAB /* render.cpp in Sources */,
 				6D7CE91714D5D58B00F84BAB /* texture.cpp in Sources */,
 				6D7CE91A14D60CD000F84BAB /* tga.cpp in Sources */,
+				24A43F6714DA2B640002652E /* sortandsweep.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +306,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -321,7 +327,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;

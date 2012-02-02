@@ -79,6 +79,11 @@ void Sprite::SetTexture(Texture* texture)
     m_texture = texture;
 }
 
+const Texture* Sprite::GetTexture() const
+{
+	return m_texture;
+}
+
 void Sprite::Draw() const
 {
     glColor4f(m_color[0], m_color[1], m_color[2], m_color[3]);
@@ -105,7 +110,8 @@ void Sprite::Draw() const
     glActiveTexture(GL_TEXTURE0);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->GetTexture());
+	// assume we are already bound!
+    //glBindTexture(GL_TEXTURE_2D, m_texture->GetTexture());
 
     static uint16_t indices[] = {0, 2, 1, 2, 3, 1};
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);

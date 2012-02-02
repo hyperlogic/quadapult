@@ -28,6 +28,7 @@ public:
     float GetDepth() const;
 
     void SetTexture(Texture* texture);
+	const Texture* GetTexture() const;
 
     void Draw() const;
 
