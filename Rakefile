@@ -28,6 +28,7 @@ $OBJECTS = ['sdl/SDLMain.o',
             'src/image.o',
             'src/refbase.o',
             'src/sortandsweep.o',
+            'src/graph.o',
             'src/tga.o'];
 
 $DEPS = $OBJECTS.map {|f| f[0..-3] + '.d'}

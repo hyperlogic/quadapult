@@ -31,6 +31,8 @@ public:
 	const Texture* GetTexture() const;
 
     void Draw() const;
+	void SetName(const std::string& name) { m_name = name; }
+	const std::string& GetName() const { return m_name; }
 
     void PushBack(std::vector<float>& vertVec,
                   std::vector<uint8_t>& colorVec,
@@ -49,6 +51,7 @@ protected:
     Vector2f m_size;
     float m_depth;
     Texture* m_texture;
+	std::string m_name;
 };
 
 #endif

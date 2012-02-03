@@ -2,6 +2,9 @@
 #include <string.h>
 #include <float.h>
 
+#include <list>
+#include <set>
+
 SortAndSweep::SortAndSweep()
 {
 	// setup sentinel
@@ -18,6 +21,9 @@ SortAndSweep::SortAndSweep()
 	}
 	sentinel->min.setMax();
 	sentinel->max.setMin();
+	sentinel->min.owner = 0;
+	sentinel->max.owner = 0;
+	sentinel->userPtr = 0;
 
 	m_aabbArraySize = 1;
 }
@@ -34,11 +40,14 @@ static bool AABBOverlap(const SortAndSweep::AABB* a, const SortAndSweep::AABB* b
 			a->max.value[1] > b->min.value[1] && b->min.value[1] < a->max.value[1]);
 }
 
-static void AddCollisionPair(const SortAndSweep::AABB* a, const SortAndSweep::AABB* b)
+void SortAndSweep::AddOverlapPair(const AABB* a, const AABB* b)
 {
-	printf("overlap!\n");
+
+	printf("overlap! %p, %p\n", a, b);
 	printf("  a = (%.5f, %.5f) (%.5f, %.5f)\n", a->min.value[0], a->min.value[1], a->max.value[0], a->max.value[1]);
 	printf("  b = (%.5f, %.5f) (%.5f, %.5f)\n", b->min.value[0], b->min.value[1], b->max.value[0], b->max.value[1]);
+
+	m_overlapPairVec.push_back(OverlapPair(a, b));
 }
 
 void SortAndSweep::Dump() const
@@ -56,24 +65,24 @@ void SortAndSweep::Dump() const
 	}
 }
 
-void SortAndSweep::Insert(const Box& box)
+void SortAndSweep::Insert(const AABB& aabbIn)
 {
 	// grab a new aabb off end of array
-	// TODO: pool
+	// TODO: make a pool
 	AABB* pAabb = &m_aabbArray[m_aabbArraySize];
 	m_aabbArraySize++;
 
-	memset(pAabb, 0, sizeof(AABB));
-
+	// init fresh AABB
+	pAabb->min.value[0] = aabbIn.min.value[0];
+	pAabb->min.value[1] = aabbIn.min.value[1];
 	pAabb->min.owner = pAabb;
-	pAabb->min.value[0] = box.min[0];
-	pAabb->min.value[1] = box.min[1];
 	pAabb->min.setMin();
-
+	pAabb->max.value[0] = aabbIn.max.value[0];
+	pAabb->max.value[1] = aabbIn.max.value[1];
 	pAabb->max.owner = pAabb;
-	pAabb->max.value[0] = box.max[0];
-	pAabb->max.value[1] = box.max[1];
 	pAabb->max.setMax();
+
+	pAabb->userPtr = aabbIn.userPtr;
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -112,10 +121,57 @@ void SortAndSweep::Insert(const Box& box)
 			if (pElem->value[0] > pAabb->max.value[0])
 				break;
 			if (AABBOverlap(pAabb, pElem->owner))
-				AddCollisionPair(pAabb, pElem->owner);
+				AddOverlapPair(pAabb, pElem->owner);
 		}
 		else if (pElem->value[0] > pAabb->min.value[0])
 			break;
 
 	}
+}
+
+void SortAndSweep::TSort()
+{
+/*
+	// l <- Empty list that will contain the sorted elements
+	std::vector<AABB*> l;
+
+	// s <- Set of all nodes with no incoming edges
+	std::set<AABB*> s;
+	s.insert(&m_aabbVec[1]);  // 0 is the singleton, 1 is the first aabb, which is the "screen"
+
+	while (!s.empty())
+	{
+		// remove a node n from S
+		std::set<AABB*>::iterator setIter = s.begin();
+		AABB* n = (*setIter);
+		s.erase(setIter);
+
+		// insert n into L
+		l.push_back(n);
+
+		// for each node m with an edge e from n to m do
+		std::vector<AABB*>::iterator vecIter;
+		for (vecIter = n->edges.begin(); vecIter != n->edges.end(); ++vecIter)
+		{
+
+		}
+	}
+*/
+
+/*
+L <- Empty list that will contain the sorted elements
+S <- Set of all nodes with no incoming edges
+while S is non-empty do
+    remove a node n from S
+    insert n into L
+    for each node m with an edge e from n to m do
+        remove edge e from the graph
+        if m has no other incoming edges then
+            insert m into S
+if graph has edges then
+    return error (graph has at least one cycle)
+else 
+    return L (a topologically sorted order)
+ */
+
 }
