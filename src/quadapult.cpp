@@ -14,6 +14,7 @@
 std::vector<Sprite*> s_spriteVec;
 std::vector<Texture*> s_textureVec;
 SortAndSweep s_sortAndSweep;
+NodeVec s_nodeVec;
 
 Graph* BuildGraph()
 {
@@ -41,7 +42,7 @@ void QUADAPULT_Init(const char* path)
     RenderInit();
     srand(1998);
 
-    const int NUM_TEXTURES = 3;
+    const int NUM_TEXTURES = 3; // TEXTURES!
     static const char* textureArray[NUM_TEXTURES + 1] = {"texture/happy.tga", "texture/sad.tga", "texture/t.tga", 0};
 
 	srand(10);
@@ -60,8 +61,9 @@ void QUADAPULT_Init(const char* path)
 
 	const float WIDTH = 320.0f;
 	const float HEIGHT = 480.0f;
-	const float SIZE = 200;
-    const int NUM_SPRITES = 2;
+	const float SIZE = 10;
+
+    const int NUM_SPRITES = 20;
 
 	// special case this is meant to indicate the "screen"!
 	Sprite* s_screenSprite = new Sprite();
@@ -117,6 +119,8 @@ void QUADAPULT_Init(const char* path)
 	// Build overlap graph!
 	Graph* graph = BuildGraph();
 	graph->Dump();
+    graph->SetRoot(s_screenSprite);
+    graph->TSort(s_nodeVec);
 }
 
 void QUADAPULT_Update(float dt)
@@ -132,13 +136,14 @@ void QUADAPULT_Draw()
 	GLuint curTex = -1;
 	unsigned int numTextureBinds = 0;
 
-#if 0
+#if 1
 
     // unbatched drawing
-    const int numSprites = s_spriteVec.size();
-    for (int i = 0; i < numSprites; ++i)
+    const int numSprites = s_nodeVec.size();
+    for (int i = 1; i < numSprites; ++i)
 	{
-		Sprite* sprite = s_spriteVec[i];
+		const Sprite* sprite = s_nodeVec[i]->sprite;
+        assert(sprite);
 		const Texture* texture = sprite->GetTexture();
 		GLuint tex = texture->GetTexture();
 		if (curTex != tex)
@@ -147,7 +152,7 @@ void QUADAPULT_Draw()
 			curTex = tex;
 			numTextureBinds++;
 		}
-		s_spriteVec[i]->Draw();
+		sprite->Draw();
 	}
 
 #else
@@ -164,10 +169,10 @@ void QUADAPULT_Draw()
 
     glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
 
-    const int numSprites = s_spriteVec.size();
-    for (int i = 0; i < numSprites; ++i)
+    const int numSprites = s_nodeVec.size();
+    for (int i = 1; i < numSprites; ++i)
     {
-		Sprite* sprite = s_spriteVec[i];
+		const Sprite* sprite = s_nodeVec[i]->sprite;
 		const Texture* texture = sprite->GetTexture();
 		GLuint tex = texture->GetTexture();
 
@@ -183,7 +188,7 @@ void QUADAPULT_Draw()
             Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
 		}
 		curTex = tex;
-		s_spriteVec[i]->PushBack(vertVec, colorVec, uvVec, indexVec);
+		sprite->PushBack(vertVec, colorVec, uvVec, indexVec);
     }
 
     // draw the last batch
