@@ -12,7 +12,7 @@
 #include "assert.h"
 #include "timer.h"
 
-std::vector<Sprite*> s_spriteVec;
+std::vector<const Sprite*> s_spriteVec;
 std::vector<Texture*> s_textureVec;
 SortAndSweep s_sortAndSweep;
 NodeVecVec s_nodeVecVec;
@@ -39,10 +39,12 @@ Graph* BuildGraph(Sprite* root)
 	return graph;
 }
 
+/*
 static bool SpriteCompare(Sprite* i, Sprite* j)
 {
 	return i->GetDepth() < j->GetDepth();
 }
+*/
 
 void QUADAPULT_Init(const char* path)
 {
@@ -129,40 +131,8 @@ void QUADAPULT_Init(const char* path)
     glEnable(GL_TEXTURE_2D);
 }
 
-void QUADAPULT_Update(float dt)
+static void DumpNodeVecVec()
 {
-    // TODO: update sort and sweep.
-	//s_sortAndSweep.Dump();
-	//s_sortAndSweep.DumpOverlaps();
-
-    static int frameTimer = 0;
-    TIMER_DEF(BuildGraph);
-    TIMER_DEF(TSort);
-
-    TIMER_START(BuildGraph);
-
-	// Build overlap graph!
-//	printf("BuildGraph()....\n");
-	Graph* graph = BuildGraph(s_screenSprite);
-
-    TIMER_STOP(BuildGraph, frameTimer);
-    TIMER_START(TSort);
-
-//	printf("TSort()....\n");
-    graph->TSort(s_nodeVecVec);
-
-    TIMER_STOP(TSort, frameTimer);
-
-    TIMER_REPORT(BuildGraph, frameTimer);
-    TIMER_REPORT(TSort, frameTimer);
-
-// TODO: we leak a graph every frame!
-
-    frameTimer++;
-
-	//graph->Dump();
-
-    /*
     // nodeVecVec is topologically sorted.
     printf("nodeVecVec = [\n");
     NodeVecVec::iterator vecVecIter = s_nodeVecVec.begin();
@@ -181,117 +151,63 @@ void QUADAPULT_Update(float dt)
 		printf("]\n");
     }
     printf("]\n");
-
-	// sort the spriteVec!
-	sort(s_spriteVec.begin(), s_spriteVec.end(), SpriteCompare);
-    */
-
-	//printf("numVecs = %lu\n", s_nodeVecVec.size());
 }
 
-void QUADAPULT_Draw()
+static void StateSort(NodeVecVec& nodeVecVec, std::vector<const Sprite*>& spriteVec)
 {
-    glClearColor(0, 0, 1, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-	GLuint curTex = -1;
-	unsigned int numTextureBinds = 0;
-
-
-#if 1
-/*
-    // draw the s_spriteVec
-	const int numSprites = s_spriteVec.size();
-	for (int j = 0; j < numSprites; ++j)
-	{
-		const Sprite* sprite = s_spriteVec[j];
-		assert(sprite);
-		const Texture* texture = sprite->GetTexture();
-		GLuint tex = texture->GetTexture();
-		if (curTex != tex)
-		{
-			glBindTexture(GL_TEXTURE_2D, tex);
-			curTex = tex;
-			numTextureBinds++;
-		}
-		sprite->Draw();
-	}
-*/
-
-    // unbatched drawing
-	const int numVecs = s_nodeVecVec.size();
-	for (int i = 1; i < numVecs; ++i) // skip the first vec, which contains the dummy "screen" sprite.
-	{
-		NodeVec* v = s_nodeVecVec[i];
-		const int numSprites = v->size();
-		for (int j = 0; j < numSprites; ++j)
-		{
-			const Sprite* sprite = (*v)[j]->sprite;
-			assert(sprite);
-			const Texture* texture = sprite->GetTexture();
-			GLuint tex = texture->GetTexture();
-			if (curTex != tex)
-			{
-				glBindTexture(GL_TEXTURE_2D, tex);
-				curTex = tex;
-				numTextureBinds++;
-			}
-			sprite->Draw();
-		}
-	}
-
-#else
-
-	// batched drawing
-	unsigned int batchSizeTotal = 0;
-	unsigned int numBatches = 0;
-
-    // for batched drawing.
-    static std::vector<float> vertVec;
-    static std::vector<uint8_t> colorVec;
-    static std::vector<float> uvVec;
-    static std::vector<uint16_t> indexVec;
-
-    glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
-
-    const int numSprites = s_nodeVec.size();
-    for (int i = 1; i < numSprites; ++i)
+    // no sorting, just copy sprites from nodeVecVec to spriteVec
+    NodeVecVec::iterator vecVecIter = nodeVecVec.begin();
+    NodeVecVec::iterator vecVecEnd = nodeVecVec.end();
+    for(; vecVecIter != vecVecEnd; ++vecVecIter)
     {
-		const Sprite* sprite = s_nodeVec[i]->sprite;
-		const Texture* texture = sprite->GetTexture();
-		GLuint tex = texture->GetTexture();
-
-		if (curTex != tex && indexVec.size() > 0)
-		{
-			// draw the current batch, and start the next.
-			numTextureBinds++;
-			numBatches++;
-			batchSizeTotal += indexVec.size();
-
-			// flush
-            glBindTexture(GL_TEXTURE_2D, curTex);
-            Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
-		}
-		curTex = tex;
-		sprite->PushBack(vertVec, colorVec, uvVec, indexVec);
+		NodeVec* v = (*vecVecIter);
+		NodeVec::iterator vecIter = v->begin();
+		NodeVec::iterator vecEnd = v->end();
+		for(; vecIter != vecEnd; ++vecIter)
+        {
+            const Sprite* sprite = (*vecIter)->sprite;
+            if (sprite != s_screenSprite)
+                spriteVec.push_back(sprite);
+        }
     }
+}
 
-    // draw the last batch
-	if (indexVec.size() > 0)
-	{
-		numTextureBinds++;
-		numBatches++;
-		batchSizeTotal += indexVec.size();
+void QUADAPULT_Update(float dt)
+{
+    // TODO: update sort and sweep. for moving sprites.
+	//s_sortAndSweep.Dump();
+	//s_sortAndSweep.DumpOverlaps();
 
-		// flush
-		glBindTexture(GL_TEXTURE_2D, curTex);
-		Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
-	}
+    static int frameTimer = 0;
+    TIMER_DEF(BuildGraph);
+    TIMER_DEF(TSort);
+    TIMER_DEF(StateSort);
 
-	//printf("numBatches = %d\n", numBatches);
-	//printf("avgBatchSize = %.2f\n", (double)batchSizeTotal / numBatches);
+    TIMER_START(BuildGraph);
+	Graph* graph = BuildGraph(s_screenSprite);
+    TIMER_STOP(BuildGraph, frameTimer);
 
-#endif
+    TIMER_START(TSort);
+    graph->TSort(s_nodeVecVec);
+    TIMER_STOP(TSort, frameTimer);
+
+    TIMER_START(StateSort);
+    StateSort(s_nodeVecVec, s_spriteVec);
+    TIMER_STOP(StateSort, frameTimer);
+
+    TIMER_REPORT(BuildGraph, frameTimer);
+    TIMER_REPORT(TSort, frameTimer);
+    TIMER_REPORT(StateSort, frameTimer);
+
+// TODO: we leak a graph every frame!
+
+    frameTimer++;
+
+	//graph->Dump();
+
+    //DumpNodeVecVec(s_nodeVecVec);
+
+	//printf("numVecs = %lu\n", s_nodeVecVec.size());
 
     // Clean up s_nodeVecVec!
     NodeVecVec::iterator vecVecIter = s_nodeVecVec.begin();
@@ -299,8 +215,11 @@ void QUADAPULT_Draw()
     for (; vecVecIter != vecVecEnd; ++vecVecIter)
 		delete (*vecVecIter);
     s_nodeVecVec.clear();
+}
 
-	//printf("numTextureBinds = %d\n", numTextureBinds);
+void QUADAPULT_Draw()
+{
+    DrawSprites(&s_spriteVec[0], s_spriteVec.size());
 }
 
 void QUADAPULT_Shutdown()

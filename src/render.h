@@ -35,6 +35,9 @@ bool FileExists(const std::string& filename);
 bool FindFileInSearchPath(const std::string& searchPath, const std::string& filename, std::string& foundFilename);
 bool IsPowerOfTwo(int number);
 
+class Sprite;
+void DrawSprites(const Sprite** sprites, size_t numSprites);
+
 #ifdef DEBUG
 #define GL_ERROR_CHECK(x) GLErrorCheck(x)
 #define ASSERT(x) assert(x)

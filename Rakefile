@@ -8,7 +8,7 @@ $C_FLAGS = ['-Wall',
             "-I#{File.expand_path('src')}",
             "-I#{File.expand_path('abaci/src')}"];
 
-$DEBUG_C_FLAGS = ['-g'];
+$DEBUG_C_FLAGS = ['-g', '-DDEBUG'];
 
 $OPT_C_FLAGS = ['-O3', '-DNDEBUG'];
 

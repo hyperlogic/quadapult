@@ -2,6 +2,7 @@
 #include "texture.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "sprite.h"
 
 unsigned int s_frameCount = 0;
 bool s_dumpRenderInfo = false;
@@ -137,4 +138,84 @@ bool FindFileInSearchPath(const std::string& searchPath, const std::string& file
 bool IsPowerOfTwo(int number)
 {
     return (number & (number - 1)) == 0;
+}
+
+void DrawSprites(const Sprite** sprites, size_t numSprites)
+{
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+	GLuint curTex = -1;
+	unsigned int numTextureBinds = 0;
+
+#if 1
+    // unbatched drawing
+    for (unsigned int i = 0; i < numSprites; ++i)
+    {
+        const Sprite* sprite = sprites[i];
+        ASSERT(sprite);
+        const Texture* texture = sprite->GetTexture();
+        ASSERT(texture);
+        GLuint tex = texture->GetTexture();
+        if (curTex != tex)
+        {
+            glBindTexture(GL_TEXTURE_2D, tex);
+            curTex = tex;
+            numTextureBinds++;
+        }
+        sprite->Draw();
+    }
+#else
+
+	// batched drawing
+	unsigned int batchSizeTotal = 0;
+	unsigned int numBatches = 0;
+
+    // for batched drawing.
+    static std::vector<float> vertVec;
+    static std::vector<uint8_t> colorVec;
+    static std::vector<float> uvVec;
+    static std::vector<uint16_t> indexVec;
+
+    glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
+
+    const int numSprites = s_nodeVec.size();
+    for (int i = 1; i < numSprites; ++i)
+    {
+		const Sprite* sprite = s_nodeVec[i]->sprite;
+		const Texture* texture = sprite->GetTexture();
+		GLuint tex = texture->GetTexture();
+
+		if (curTex != tex && indexVec.size() > 0)
+		{
+			// draw the current batch, and start the next.
+			numTextureBinds++;
+			numBatches++;
+			batchSizeTotal += indexVec.size();
+
+			// flush
+            glBindTexture(GL_TEXTURE_2D, curTex);
+            Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
+		}
+		curTex = tex;
+		sprite->PushBack(vertVec, colorVec, uvVec, indexVec);
+    }
+
+    // draw the last batch
+	if (indexVec.size() > 0)
+	{
+		numTextureBinds++;
+		numBatches++;
+		batchSizeTotal += indexVec.size();
+
+		// flush
+		glBindTexture(GL_TEXTURE_2D, curTex);
+		Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
+	}
+
+	//printf("numBatches = %d\n", numBatches);
+	//printf("avgBatchSize = %.2f\n", (double)batchSizeTotal / numBatches);
+
+#endif
+
 }
