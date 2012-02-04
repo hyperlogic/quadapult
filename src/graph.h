@@ -17,11 +17,11 @@ typedef std::queue<Node*> NodeQueue;
 typedef std::vector<NodeVec*> NodeVecVec;
 
 struct Node {
-	Node(const Sprite* spriteIn) : sprite(spriteIn), level(-1) {}
+	Node(const Sprite* spriteIn) : sprite(spriteIn), parent(0), level(-1) {}
 	const Sprite* sprite;
 
-	NodeList parentList;
     NodeList childList;
+	Node* parent;
 	int level;
 
     void AddChild(Node* child);
@@ -29,15 +29,13 @@ struct Node {
 };
 
 struct Graph {
+	Graph(Sprite* root);
 	void AddEdge(const Sprite* a, const Sprite* b);
 
 	void Dump() const;
-    void SetRoot(const Sprite* root);
 
 	// NOTE: caller needs to delete NodeVec* elements.
     void TSort(NodeVecVec& nodeVecVec);
-
-	void TSort2(NodeVecVec& nodeVecVec);
 
 protected:
 	typedef std::map<const Sprite*, Node*> NodeMap;
@@ -45,8 +43,11 @@ protected:
 
     NodeMap::iterator FindOrInsertSprite(const Sprite* sprite);
 
+	void DumpRec(const Node*, int indent) const;
+
 	NodeMap m_nodeMap;
     NodeMap::iterator m_rootIter;
+	int m_maxLevel;
 };
 
 #endif

@@ -16,9 +16,9 @@ std::vector<Texture*> s_textureVec;
 SortAndSweep s_sortAndSweep;
 NodeVecVec s_nodeVecVec;
 
-Graph* BuildGraph()
+Graph* BuildGraph(Sprite* root)
 {
-	Graph* graph = new Graph();
+	Graph* graph = new Graph(root);
 
 	SortAndSweep::OverlapPairVec::const_iterator pairIter = s_sortAndSweep.GetOverlapPairVec().begin();
 	SortAndSweep::OverlapPairVec::const_iterator pairEnd = s_sortAndSweep.GetOverlapPairVec().end();
@@ -57,7 +57,8 @@ void QUADAPULT_Init(const char* path)
 		"texture/q.tga", "texture/r.tga", "texture/s.tga", "texture/t.tga", "texture/u.tga", "texture/v.tga", "texture/w.tga", "texture/x.tga",
 		"texture/y.tga", "texture/z.tga", 0};
 
-	srand(10);
+	//srand(10);
+	srand(12);
 
     Texture::SetSearchPath(path);
     for (int i = 0; textureArray[i] != 0; ++i)
@@ -73,9 +74,9 @@ void QUADAPULT_Init(const char* path)
 
 	const float WIDTH = 320.0f;
 	const float HEIGHT = 480.0f;
-	const float SIZE = 30;
+	const float SIZE = 10;
 
-    const int NUM_SPRITES = 26;
+    const int NUM_SPRITES = 500;
 
 	// special case this is meant to indicate the "screen"!
 	Sprite* s_screenSprite = new Sprite();
@@ -127,17 +128,16 @@ void QUADAPULT_Init(const char* path)
     glEnable(GL_TEXTURE_2D);
 
 	//s_sortAndSweep.Dump();
-	s_sortAndSweep.DumpOverlaps();
+	//s_sortAndSweep.DumpOverlaps();
 
 	// Build overlap graph!
 	printf("BuildGraph()....\n");
-	Graph* graph = BuildGraph();
+	Graph* graph = BuildGraph(s_screenSprite);
+
+	printf("TSort()....\n");
+    graph->TSort(s_nodeVecVec);
 
 	//graph->Dump();
-    graph->SetRoot(s_screenSprite);
-
-	printf("TSort2()....\n");
-    graph->TSort2(s_nodeVecVec);
 
     // nodeVecVec is topologically sorted.
     printf("nodeVecVec = [\n");
@@ -179,7 +179,6 @@ void QUADAPULT_Draw()
 
 
 #if 1
-
     // draw the s_spriteVec
 	const int numSprites = s_spriteVec.size();
 	for (int j = 0; j < numSprites; ++j)
@@ -198,7 +197,6 @@ void QUADAPULT_Draw()
 	}
 
 /*
-
     // unbatched drawing
 	const int numVecs = s_nodeVecVec.size();
 	for (int i = 1; i < numVecs; ++i) // skip the first vec, which contains the dummy "screen" sprite.
@@ -221,7 +219,6 @@ void QUADAPULT_Draw()
 		}
 	}
 */
-
 #else
 
 	// batched drawing
