@@ -10,11 +10,13 @@
 #include "sortandsweep.h"
 #include "graph.h"
 #include "assert.h"
+#include "timer.h"
 
 std::vector<Sprite*> s_spriteVec;
 std::vector<Texture*> s_textureVec;
 SortAndSweep s_sortAndSweep;
 NodeVecVec s_nodeVecVec;
+Sprite* s_screenSprite = 0;
 
 Graph* BuildGraph(Sprite* root)
 {
@@ -48,7 +50,6 @@ void QUADAPULT_Init(const char* path)
 //		exit(1);
 
     RenderInit();
-    srand(1998);
 
     const int NUM_TEXTURES = 26; // TEXTURES!
     static const char* textureArray[NUM_TEXTURES + 1] = {
@@ -57,8 +58,8 @@ void QUADAPULT_Init(const char* path)
 		"texture/q.tga", "texture/r.tga", "texture/s.tga", "texture/t.tga", "texture/u.tga", "texture/v.tga", "texture/w.tga", "texture/x.tga",
 		"texture/y.tga", "texture/z.tga", 0};
 
-	//srand(10);
-	srand(12);
+	srand(10);
+	//srand(12);
 
     Texture::SetSearchPath(path);
     for (int i = 0; textureArray[i] != 0; ++i)
@@ -74,12 +75,12 @@ void QUADAPULT_Init(const char* path)
 
 	const float WIDTH = 320.0f;
 	const float HEIGHT = 480.0f;
-	const float SIZE = 10;
+	const float SIZE = 30;
 
-    const int NUM_SPRITES = 500;
+    const int NUM_SPRITES = 26;
 
 	// special case this is meant to indicate the "screen"!
-	Sprite* s_screenSprite = new Sprite();
+	s_screenSprite = new Sprite();
 	Vector2f pos(RandomScalar(0.0f, WIDTH - SIZE), RandomScalar(0.0f, HEIGHT - SIZE));
 	Vector2f size(Vector2f(SIZE, SIZE));
 	float depth = -FLT_MAX;
@@ -126,19 +127,42 @@ void QUADAPULT_Init(const char* path)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
+}
 
+void QUADAPULT_Update(float dt)
+{
+    // TODO: update sort and sweep.
 	//s_sortAndSweep.Dump();
 	//s_sortAndSweep.DumpOverlaps();
 
+    static int frameTimer = 0;
+    TIMER_DEF(BuildGraph);
+    TIMER_DEF(TSort);
+
+    TIMER_START(BuildGraph);
+
 	// Build overlap graph!
-	printf("BuildGraph()....\n");
+//	printf("BuildGraph()....\n");
 	Graph* graph = BuildGraph(s_screenSprite);
 
-	printf("TSort()....\n");
+    TIMER_STOP(BuildGraph, frameTimer);
+    TIMER_START(TSort);
+
+//	printf("TSort()....\n");
     graph->TSort(s_nodeVecVec);
+
+    TIMER_STOP(TSort, frameTimer);
+
+    TIMER_REPORT(BuildGraph, frameTimer);
+    TIMER_REPORT(TSort, frameTimer);
+
+// TODO: we leak a graph every frame!
+
+    frameTimer++;
 
 	//graph->Dump();
 
+    /*
     // nodeVecVec is topologically sorted.
     printf("nodeVecVec = [\n");
     NodeVecVec::iterator vecVecIter = s_nodeVecVec.begin();
@@ -160,13 +184,9 @@ void QUADAPULT_Init(const char* path)
 
 	// sort the spriteVec!
 	sort(s_spriteVec.begin(), s_spriteVec.end(), SpriteCompare);
+    */
 
-	printf("numVecs = %lu\n", s_nodeVecVec.size());
-}
-
-void QUADAPULT_Update(float dt)
-{
-
+	//printf("numVecs = %lu\n", s_nodeVecVec.size());
 }
 
 void QUADAPULT_Draw()
@@ -179,6 +199,7 @@ void QUADAPULT_Draw()
 
 
 #if 1
+/*
     // draw the s_spriteVec
 	const int numSprites = s_spriteVec.size();
 	for (int j = 0; j < numSprites; ++j)
@@ -195,8 +216,8 @@ void QUADAPULT_Draw()
 		}
 		sprite->Draw();
 	}
+*/
 
-/*
     // unbatched drawing
 	const int numVecs = s_nodeVecVec.size();
 	for (int i = 1; i < numVecs; ++i) // skip the first vec, which contains the dummy "screen" sprite.
@@ -218,7 +239,7 @@ void QUADAPULT_Draw()
 			sprite->Draw();
 		}
 	}
-*/
+
 #else
 
 	// batched drawing
@@ -271,6 +292,13 @@ void QUADAPULT_Draw()
 	//printf("avgBatchSize = %.2f\n", (double)batchSizeTotal / numBatches);
 
 #endif
+
+    // Clean up s_nodeVecVec!
+    NodeVecVec::iterator vecVecIter = s_nodeVecVec.begin();
+    NodeVecVec::iterator vecVecEnd = s_nodeVecVec.end();
+    for (; vecVecIter != vecVecEnd; ++vecVecIter)
+		delete (*vecVecIter);
+    s_nodeVecVec.clear();
 
 	//printf("numTextureBinds = %d\n", numTextureBinds);
 }

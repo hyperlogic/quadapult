@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
 
 	// TODO: get this from config file.
-    Config config(false, false, 768, 1024);
+    Config config(false, false, 768/2, 1024/2);
     config.title = "Quadapult";
 
     // msaa
@@ -101,6 +101,7 @@ int main(int argc, char* argv[])
 
         if (!done)
         {
+            QUADAPULT_Update(0.1); // WRONG
             QUADAPULT_Draw();
             SDL_GL_SwapBuffers();
         }

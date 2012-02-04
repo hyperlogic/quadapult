@@ -26,6 +26,7 @@ struct Node {
 
     void AddChild(Node* child);
     void RemChild(Node* child);
+    int LevelUp(int level);
 };
 
 struct Graph {

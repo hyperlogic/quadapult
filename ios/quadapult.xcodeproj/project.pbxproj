@@ -22,6 +22,7 @@
 		6D1A5F2814D502B10067524D /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2714D502B10067524D /* ViewController.mm */; };
 		6D1A5F2B14D502B10067524D /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2914D502B10067524D /* ViewController_iPhone.xib */; };
 		6D1A5F2E14D502B10067524D /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A5F2C14D502B10067524D /* ViewController_iPad.xib */; };
+		6D6B61E314DDB5AB00637F11 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D6B61E114DDB5AB00637F11 /* timer.cpp */; };
 		6D7CE91014D5D43800F84BAB /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D7CE90C14D5D43800F84BAB /* image.cpp */; };
 		6D7CE91114D5D43800F84BAB /* refbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D7CE90E14D5D43800F84BAB /* refbase.cpp */; };
 		6D7CE91614D5D58B00F84BAB /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D7CE91214D5D58B00F84BAB /* render.cpp */; };
@@ -55,6 +56,8 @@
 		6D1A5F2714D502B10067524D /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		6D1A5F2A14D502B10067524D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
 		6D1A5F2D14D502B10067524D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPad.xib; sourceTree = "<group>"; };
+		6D6B61E114DDB5AB00637F11 /* timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timer.cpp; path = ../src/timer.cpp; sourceTree = "<group>"; };
+		6D6B61E214DDB5AB00637F11 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = ../src/timer.h; sourceTree = "<group>"; };
 		6D7CE90C14D5D43800F84BAB /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = ../src/image.cpp; sourceTree = "<group>"; };
 		6D7CE90D14D5D43800F84BAB /* image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = image.h; path = ../src/image.h; sourceTree = "<group>"; };
 		6D7CE90E14D5D43800F84BAB /* refbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = refbase.cpp; path = ../src/refbase.cpp; sourceTree = "<group>"; };
@@ -153,6 +156,8 @@
 		6DCDB9EC14D503C900ADE8E3 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6D6B61E114DDB5AB00637F11 /* timer.cpp */,
+				6D6B61E214DDB5AB00637F11 /* timer.h */,
 				24A60A5014DB72930057B2B6 /* graph.cpp */,
 				24A60A5114DB72930057B2B6 /* graph.h */,
 				24A43F6514DA2B640002652E /* sortandsweep.cpp */,
@@ -262,6 +267,7 @@
 				6D7CE91A14D60CD000F84BAB /* tga.cpp in Sources */,
 				24A43F6714DA2B640002652E /* sortandsweep.cpp in Sources */,
 				24A60A5214DB72930057B2B6 /* graph.cpp in Sources */,
+				6D6B61E314DDB5AB00637F11 /* timer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

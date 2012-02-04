@@ -19,6 +19,17 @@ void Node::RemChild(Node* child)
 	child->parent = 0;
 }
 
+int Node::LevelUp(int levelIn)
+{
+    level = levelIn;
+    int maxLevel = level;
+	NodeList::iterator listIter = childList.begin();
+	NodeList::iterator listEnd = childList.end();
+	for(; listIter != listEnd; ++listIter)
+		maxLevel = std::max(maxLevel, (*listIter)->LevelUp(levelIn + 1));
+    return maxLevel;
+}
+
 Graph::Graph(Sprite* root)
 {
     m_rootIter = FindOrInsertSprite(root);
@@ -51,9 +62,7 @@ void Graph::AddEdge(const Sprite* a, const Sprite* b)
 	{
 		//printf("AddEdge %s(%d) -> %s(%d)\n", a->GetName().c_str(), na->level, b->GetName().c_str(), nb->level);
 		na->AddChild(nb);
-		// AJT: TODO: this is quite correct, becasue it doesn't bump up the level count of the children of nb...
-		nb->level = na->level + 1;
-		m_maxLevel = std::max(m_maxLevel, na->level + 1);
+        m_maxLevel = std::max(m_maxLevel, nb->LevelUp(na->level + 1));
 	}
 }
 
@@ -75,6 +84,7 @@ void Graph::DumpRec(const Node* n, int indent) const
 
 void Graph::TSort(NodeVecVec& nodeVecVec)
 {
+    /*
 	NodeQueue q;
 	q.push(m_rootIter->second);
 	int numLevels = 0;
@@ -93,8 +103,9 @@ void Graph::TSort(NodeVecVec& nodeVecVec)
 			q.push(m);
 		}
 	}
+    */
 
-	for (int i = 0; i < numLevels; ++i)
+	for (int i = 0; i < m_maxLevel + 1; ++i)
 		nodeVecVec.push_back(new NodeVec());
 
 	NodeMap::iterator mapIter = m_nodeMap.begin();

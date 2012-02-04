@@ -29,7 +29,8 @@ $OBJECTS = ['sdl/SDLMain.o',
             'src/refbase.o',
             'src/sortandsweep.o',
             'src/graph.o',
-            'src/tga.o'];
+            'src/tga.o',
+            'src/timer.o'];
 
 $DEPS = $OBJECTS.map {|f| f[0..-3] + '.d'}
 $EXE = 'quadapult'
@@ -90,13 +91,13 @@ task :add_debug_flags do
 end
 
 desc "Optimized Build"
-task :opt => [:add_opt_flags, $EXE]
+task :opt => [:add_opt_flags, $EXE, :textures]
 
 desc "Debug Build"
-task :debug => [:add_debug_flags, $EXE]
+task :debug => [:add_debug_flags, $EXE, :textures]
 
 desc "Optimized Build, By Default"
-task :default => [:opt, :textures]
+task :default => [:opt]
 
 rule '.tga' => '.png' do |t|
   sh "convert #{t.source} #{t.name}"
