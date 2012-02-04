@@ -220,6 +220,7 @@ void QUADAPULT_Update(float dt)
 void QUADAPULT_Draw()
 {
     DrawSprites(&s_spriteVec[0], s_spriteVec.size());
+    s_spriteVec.clear();
 }
 
 void QUADAPULT_Shutdown()

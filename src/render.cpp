@@ -148,7 +148,7 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
 	GLuint curTex = -1;
 	unsigned int numTextureBinds = 0;
 
-#if 1
+#if 0
     // unbatched drawing
     for (unsigned int i = 0; i < numSprites; ++i)
     {
@@ -177,13 +177,12 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
     static std::vector<float> uvVec;
     static std::vector<uint16_t> indexVec;
 
-    glBindTexture(GL_TEXTURE_2D, s_textureVec[0]->GetTexture());
-
-    const int numSprites = s_nodeVec.size();
-    for (int i = 1; i < numSprites; ++i)
+    for (unsigned int i = 0; i < numSprites; ++i)
     {
-		const Sprite* sprite = s_nodeVec[i]->sprite;
+		const Sprite* sprite = sprites[i];
+        ASSERT(sprite);
 		const Texture* texture = sprite->GetTexture();
+        ASSERT(texture);
 		GLuint tex = texture->GetTexture();
 
 		if (curTex != tex && indexVec.size() > 0)
@@ -213,6 +212,7 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
 		Sprite::DrawVecs(vertVec, colorVec, uvVec, indexVec);
 	}
 
+    //printf("numSprites = %lu\n", numSprites);
 	//printf("numBatches = %d\n", numBatches);
 	//printf("avgBatchSize = %.2f\n", (double)batchSizeTotal / numBatches);
 
