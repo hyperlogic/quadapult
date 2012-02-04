@@ -96,10 +96,18 @@ desc "Debug Build"
 task :debug => [:add_debug_flags, $EXE]
 
 desc "Optimized Build, By Default"
-task :default => [:opt]
+task :default => [:opt, :textures]
+
+rule '.tga' => '.png' do |t|
+  sh "convert #{t.source} #{t.name}"
+end
+
+PNGS = Dir.glob "texture/*.png"
+TGAS = PNGS.map {|f| f[0..-5] + '.tga'}
+
+desc "build tga's from pngs"
+task :textures => TGAS
 
 CLEAN.include $DEPS, $OBJECTS
-CLOBBER.include $EXE
-
-
+CLOBBER.include $EXE, TGAS
 

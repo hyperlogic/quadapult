@@ -31,7 +31,7 @@ Graph::NodeMap::iterator Graph::FindOrInsertSprite(const Sprite* sprite)
 
 void Graph::AddEdge(const Sprite* a, const Sprite* b)
 {
-	printf("AddEdge %s -> %s\n", a->GetName().c_str(), b->GetName().c_str());
+//	printf("AddEdge %s -> %s\n", a->GetName().c_str(), b->GetName().c_str());
 
 	NodeMap::iterator mapIterA = FindOrInsertSprite(a);
     NodeMap::iterator mapIterB = FindOrInsertSprite(b);
@@ -63,7 +63,7 @@ void Graph::Dump() const
 	}
 }
 
-void Graph::TSort(NodeVec& nodeVec)
+void Graph::TSort(NodeVecVec& nodeVecVec)
 {
     /*
 L = Empty list that will contain the sorted elements
@@ -80,37 +80,92 @@ if graph has edges then
 else 
     return L (a topologically sorted order)
     */
-    nodeVec.clear();
+    nodeVecVec.clear();
 
-    NodeSet s;
-    s.insert(m_rootIter->second);
-    while (!s.empty())
+	NodeVec* v = new NodeVec();
+    NodeQueue q;
+    q.push(m_rootIter->second);
+	q.push(0);
+
+    while (!q.empty())
     {
-        NodeSet::iterator setIter = s.begin();
-        Node* n = (*setIter);
-        s.erase(setIter);
+		Node* n = q.front();
+		q.pop();
 
-        nodeVec.push_back(n);
+		if (!n)
+		{
+			if (v->size() > 0)
+			{
+				// we are done with this vec.
+				nodeVecVec.push_back(v);
 
-        NodeList childList = n->childList;
-        NodeList::iterator listIter = childList.begin();
+				// start a new vec
+				v = new NodeVec();
+			}
+			continue;
+		}
+		v->push_back(n);
+
+		NodeList childList = n->childList;
+		NodeList::iterator listIter = childList.begin();
         NodeList::iterator listEnd = childList.end();
-        for (; listIter != listEnd; ++listIter)
+		for (; listIter != listEnd; ++listIter)
         {
             Node* m = (*listIter);
-            n->RemChild(m);
+			n->RemChild(m);
             if (m->parentList.empty())
-                s.insert(m);
+                q.push(m);
         }
+		q.push(0);
     }
+}
 
-    // l is topologically sorted.
-    printf("sorted list = [\n");
-    NodeVec::iterator vecIter = nodeVec.begin();
-    NodeVec::iterator vecEnd = nodeVec.end();
-    for(; vecIter != vecEnd; ++vecIter)
-    {
-        printf("%s\n", (*vecIter)->sprite->GetName().c_str());
-    }
-    printf("]\n");
+static int tCount = 0;
+static int traverse(Node* node, int level)
+{
+	tCount++;
+	int numLevels = level + 1;
+	node->level = std::max(level, node->level);
+
+	// FUCK! COPY
+	NodeList l = node->childList;
+	NodeList::iterator listIter = l.begin();
+	NodeList::iterator listEnd = l.end();
+	for (; listIter != listEnd; ++listIter)
+	{
+		Node* child = *listIter;
+		node->RemChild(child);
+		if (child->parentList.empty())
+		{
+			int ret = traverse(child, level + 1);
+			numLevels = std::max(ret, numLevels);
+		}
+	}
+
+	return numLevels;
+}
+
+void Graph::TSort2(NodeVecVec& nodeVecVec)
+{
+	nodeVecVec.clear();
+
+	printf("Traverse...\n");
+
+	// depth first traverse graph and mark each node with it's maximum level.
+	int numLevels = traverse(m_rootIter->second, 0);
+
+	printf("tCount = %d\n", tCount);
+
+	for (int i = 0; i < numLevels; ++i)
+		nodeVecVec.push_back(new NodeVec());
+
+	printf("Fill...\n");
+	NodeMap::iterator mapIter = m_nodeMap.begin();
+	NodeMap::iterator mapEnd = m_nodeMap.end();
+	for (; mapIter != mapEnd; ++mapIter)
+	{
+		Node* n = mapIter->second;
+		if (n->level >= 0)
+			nodeVecVec[n->level]->push_back(n);
+	}
 }

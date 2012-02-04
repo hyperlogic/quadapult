@@ -82,12 +82,13 @@ public:
 
 	void Insert(const AABB& aabb);
 	void Dump() const;
-
-	void TSort();
+	void DumpOverlaps() const;
 
 	typedef std::pair<const AABB*, const AABB*> OverlapPair;
 	typedef std::vector<OverlapPair> OverlapPairVec;
 	const OverlapPairVec& GetOverlapPairVec() const { return m_overlapPairVec; }
+
+	static bool UnitTest();
 
 protected:
 

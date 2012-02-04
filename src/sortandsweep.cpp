@@ -5,6 +5,8 @@
 #include <list>
 #include <set>
 
+#include "sprite.h"  // for debugging
+
 SortAndSweep::SortAndSweep()
 {
 	// setup sentinel
@@ -30,29 +32,21 @@ SortAndSweep::SortAndSweep()
 
 static bool AABBOverlap(const SortAndSweep::AABB* a, const SortAndSweep::AABB* b)
 {
-	/*
-	printf("check overlap\n");
-	printf("  a = (%.5f, %.5f) (%.5f, %.5f)\n", a->min.value[0], a->min.value[1], a->max.value[0], a->max.value[1]);
-	printf("  b = (%.5f, %.5f) (%.5f, %.5f)\n", b->min.value[0], b->min.value[1], b->max.value[0], b->max.value[1]);
-	*/
-
-	return (a->max.value[0] > b->min.value[0] && b->min.value[0] < a->max.value[0] &&
-			a->max.value[1] > b->min.value[1] && b->min.value[1] < a->max.value[1]);
+	if (a->max.value[0] < b->min.value[0] || a->min.value[0] > b->max.value[0])
+		return false;
+	if (a->max.value[1] < b->min.value[1] || a->min.value[1] > b->max.value[1])
+		return false;
+	return true;
 }
 
 void SortAndSweep::AddOverlapPair(const AABB* a, const AABB* b)
 {
-
-	printf("overlap! %p, %p\n", a, b);
-	printf("  a = (%.5f, %.5f) (%.5f, %.5f)\n", a->min.value[0], a->min.value[1], a->max.value[0], a->max.value[1]);
-	printf("  b = (%.5f, %.5f) (%.5f, %.5f)\n", b->min.value[0], b->min.value[1], b->max.value[0], b->max.value[1]);
-
 	m_overlapPairVec.push_back(OverlapPair(a, b));
 }
 
 void SortAndSweep::Dump() const
 {
-	printf("SortAndSweepDump()\n");
+	printf("SortAndSweep::Dump()\n");
 	for (int i = 0; i < 2; ++i)
 	{
 		printf("    [ ");
@@ -64,6 +58,18 @@ void SortAndSweep::Dump() const
 		printf("]\n");
 	}
 }
+
+void SortAndSweep::DumpOverlaps() const
+{
+	printf("SortAndSweep::DumpOverlaps()\n");
+
+	for (int i = 0; i < (int)m_overlapPairVec.size(); ++i)
+	{
+		const OverlapPair& p = m_overlapPairVec[i];
+		printf("    %s -> %s\n", ((Sprite*)(p.first->userPtr))->GetName().c_str(), ((Sprite*)(p.second->userPtr))->GetName().c_str());
+	}
+}
+
 
 void SortAndSweep::Insert(const AABB& aabbIn)
 {
@@ -123,55 +129,68 @@ void SortAndSweep::Insert(const AABB& aabbIn)
 			if (AABBOverlap(pAabb, pElem->owner))
 				AddOverlapPair(pAabb, pElem->owner);
 		}
-		else if (pElem->value[0] > pAabb->min.value[0])
+		else if (pElem->value[0] > pAabb->max.value[0])
 			break;
 
 	}
 }
 
-void SortAndSweep::TSort()
+struct OverlapCheck
 {
-/*
-	// l <- Empty list that will contain the sorted elements
-	std::vector<AABB*> l;
+	void* a;
+	void* b;
+	bool pass;
+};
 
-	// s <- Set of all nodes with no incoming edges
-	std::set<AABB*> s;
-	s.insert(&m_aabbVec[1]);  // 0 is the singleton, 1 is the first aabb, which is the "screen"
+bool SortAndSweep::UnitTest()
+{
+	printf("SortAndSweep::UnitTest\n");
 
-	while (!s.empty())
+	// Test
+	const int numBoxes = 4;
+	AABB box[numBoxes];
+	box[0] = AABB(Vector2f(1, 2), Vector2f(4, 5), (void*)0);
+	box[1] = AABB(Vector2f(3, 1), Vector2f(6, 4), (void*)1);
+	box[2] = AABB(Vector2f(3, 1), Vector2f(6, 4), (void*)2);
+	box[3] = AABB(Vector2f(5, 2), Vector2f(8, 5), (void*)3);
+	box[4] = AABB(Vector2f(0, 0), Vector2f(9, 9), (void*)4);
+
+	SortAndSweep ss;
+	for (int i = 0; i < numBoxes; ++i)
+		ss.Insert(box[i]);
+
+	const int numChecks = 5;
+	static OverlapCheck checks[] = {{(void*)0, (void*)1, false},
+									{(void*)0, (void*)2, false},
+									{(void*)1, (void*)2, false},
+									{(void*)1, (void*)3, false},
+									{(void*)2, (void*)3, false},
+									{(void*)4, (void*)0, false},
+									{(void*)4, (void*)1, false},
+									{(void*)4, (void*)2, false},
+									{(void*)4, (void*)3, false}};
+
+	for (int i = 0; i < (int)ss.m_overlapPairVec.size(); ++i)
 	{
-		// remove a node n from S
-		std::set<AABB*>::iterator setIter = s.begin();
-		AABB* n = (*setIter);
-		s.erase(setIter);
-
-		// insert n into L
-		l.push_back(n);
-
-		// for each node m with an edge e from n to m do
-		std::vector<AABB*>::iterator vecIter;
-		for (vecIter = n->edges.begin(); vecIter != n->edges.end(); ++vecIter)
+		OverlapPair& p = ss.m_overlapPairVec[i];
+		for (int j = 0; j < numChecks; ++j)
 		{
-
+			if (!checks[i].pass &&
+				(p.first->userPtr == checks[j].a && p.second->userPtr == checks[j].b) ||
+				(p.first->userPtr == checks[j].b && p.second->userPtr == checks[j].a))
+			{
+				checks[i].pass = true;
+			}
 		}
 	}
-*/
 
-/*
-L <- Empty list that will contain the sorted elements
-S <- Set of all nodes with no incoming edges
-while S is non-empty do
-    remove a node n from S
-    insert n into L
-    for each node m with an edge e from n to m do
-        remove edge e from the graph
-        if m has no other incoming edges then
-            insert m into S
-if graph has edges then
-    return error (graph has at least one cycle)
-else 
-    return L (a topologically sorted order)
- */
-
+	// check
+	for (int i = 0; i < numChecks; ++i)
+	{
+		if (!checks[i].pass) {
+			printf("checks[%d] failed!\n", i);
+			return false;
+		}
+	}
+	return true;
 }

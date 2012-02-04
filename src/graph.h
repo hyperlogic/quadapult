@@ -5,6 +5,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <queue>
 
 struct Node;
 class Sprite;
@@ -12,13 +13,16 @@ class Sprite;
 typedef std::list<Node*> NodeList;
 typedef std::set<Node*> NodeSet;
 typedef std::vector<Node*> NodeVec;
+typedef std::queue<Node*> NodeQueue;
+typedef std::vector<NodeVec*> NodeVecVec;
 
 struct Node {
-	Node(const Sprite* spriteIn) : sprite(spriteIn) {}
+	Node(const Sprite* spriteIn) : sprite(spriteIn), level(-1) {}
 	const Sprite* sprite;
 
 	NodeList parentList;
     NodeList childList;
+	int level;
 
     void AddChild(Node* child);
     void RemChild(Node* child);
@@ -30,7 +34,10 @@ struct Graph {
 	void Dump() const;
     void SetRoot(const Sprite* root);
 
-    void TSort(NodeVec& nodeVec);
+	// NOTE: caller needs to delete NodeVec* elements.
+    void TSort(NodeVecVec& nodeVecVec);
+
+	void TSort2(NodeVecVec& nodeVecVec);
 
 protected:
 	typedef std::map<const Sprite*, Node*> NodeMap;

@@ -4,6 +4,10 @@
 *.o
 *.d
 
+/texture/*.tga
+
+.DS_Store
+
 # xcode
 project.xcworkspace/
 xcuserdata/

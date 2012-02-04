@@ -14,7 +14,7 @@
 std::vector<Sprite*> s_spriteVec;
 std::vector<Texture*> s_textureVec;
 SortAndSweep s_sortAndSweep;
-NodeVec s_nodeVec;
+NodeVecVec s_nodeVecVec;
 
 Graph* BuildGraph()
 {
@@ -37,13 +37,25 @@ Graph* BuildGraph()
 	return graph;
 }
 
+static bool SpriteCompare(Sprite* i, Sprite* j)
+{
+	return i->GetDepth() < j->GetDepth();
+}
+
 void QUADAPULT_Init(const char* path)
 {
+//	if (!SortAndSweep::UnitTest())
+//		exit(1);
+
     RenderInit();
     srand(1998);
 
-    const int NUM_TEXTURES = 3; // TEXTURES!
-    static const char* textureArray[NUM_TEXTURES + 1] = {"texture/happy.tga", "texture/sad.tga", "texture/t.tga", 0};
+    const int NUM_TEXTURES = 26; // TEXTURES!
+    static const char* textureArray[NUM_TEXTURES + 1] = {
+		"texture/a.tga", "texture/b.tga", "texture/c.tga", "texture/d.tga", "texture/e.tga", "texture/f.tga", "texture/g.tga", "texture/h.tga",
+		"texture/i.tga", "texture/j.tga", "texture/k.tga", "texture/l.tga", "texture/m.tga", "texture/n.tga", "texture/o.tga", "texture/p.tga",
+		"texture/q.tga", "texture/r.tga", "texture/s.tga", "texture/t.tga", "texture/u.tga", "texture/v.tga", "texture/w.tga", "texture/x.tga",
+		"texture/y.tga", "texture/z.tga", 0};
 
 	srand(10);
 
@@ -61,9 +73,9 @@ void QUADAPULT_Init(const char* path)
 
 	const float WIDTH = 320.0f;
 	const float HEIGHT = 480.0f;
-	const float SIZE = 10;
+	const float SIZE = 30;
 
-    const int NUM_SPRITES = 20;
+    const int NUM_SPRITES = 26;
 
 	// special case this is meant to indicate the "screen"!
 	Sprite* s_screenSprite = new Sprite();
@@ -86,12 +98,12 @@ void QUADAPULT_Init(const char* path)
 		Vector2f size(Vector2f(SIZE, SIZE));
 		float depth = RandomScalar(0.0f, 1.0f);
 
-        sprite->SetColor(Vector4f(RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f), 1.0f));
+        sprite->SetColor(Vector4f(RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f), RandomScalar(0.0f, 1.0f), 0.9f));
         sprite->SetPosition(pos);
         sprite->SetSize(size);
         sprite->SetDepth(depth);
-        //sprite->SetTexture(s_textureVec[i % NUM_TEXTURES]);
-		int texNum = RandomInt(0, NUM_TEXTURES-1);
+		//int texNum = RandomInt(0, NUM_TEXTURES-1);
+		int texNum = i % NUM_TEXTURES;
 		sprite->SetTexture(s_textureVec[texNum]);
 		char temp[512];
 		sprintf(temp, "%d:%s[%.3f]", i, textureArray[texNum], depth);
@@ -114,13 +126,42 @@ void QUADAPULT_Init(const char* path)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
 
-	s_sortAndSweep.Dump();
+	//s_sortAndSweep.Dump();
+	s_sortAndSweep.DumpOverlaps();
 
 	// Build overlap graph!
+	printf("BuildGraph()....\n");
 	Graph* graph = BuildGraph();
-	graph->Dump();
+
+	//graph->Dump();
     graph->SetRoot(s_screenSprite);
-    graph->TSort(s_nodeVec);
+
+	printf("TSort2()....\n");
+    graph->TSort2(s_nodeVecVec);
+
+    // nodeVecVec is topologically sorted.
+    printf("nodeVecVec = [\n");
+    NodeVecVec::iterator vecVecIter = s_nodeVecVec.begin();
+    NodeVecVec::iterator vecVecEnd = s_nodeVecVec.end();
+    for(; vecVecIter != vecVecEnd; ++vecVecIter)
+    {
+		NodeVec* v = (*vecVecIter);
+		assert(v);
+		printf("    [ ");
+		NodeVec::iterator vecIter = v->begin();
+		NodeVec::iterator vecEnd = v->end();
+		for(; vecIter != vecEnd; ++vecIter)
+		{
+			printf("%s ", (*vecIter)->sprite->GetName().c_str());
+		}
+		printf("]\n");
+    }
+    printf("]\n");
+
+	// sort the spriteVec!
+	sort(s_spriteVec.begin(), s_spriteVec.end(), SpriteCompare);
+
+	printf("numVecs = %lu\n", s_nodeVecVec.size());
 }
 
 void QUADAPULT_Update(float dt)
@@ -136,14 +177,15 @@ void QUADAPULT_Draw()
 	GLuint curTex = -1;
 	unsigned int numTextureBinds = 0;
 
+
 #if 1
 
-    // unbatched drawing
-    const int numSprites = s_nodeVec.size();
-    for (int i = 1; i < numSprites; ++i)
+    // draw the s_spriteVec
+	const int numSprites = s_spriteVec.size();
+	for (int j = 0; j < numSprites; ++j)
 	{
-		const Sprite* sprite = s_nodeVec[i]->sprite;
-        assert(sprite);
+		const Sprite* sprite = s_spriteVec[j];
+		assert(sprite);
 		const Texture* texture = sprite->GetTexture();
 		GLuint tex = texture->GetTexture();
 		if (curTex != tex)
@@ -154,6 +196,31 @@ void QUADAPULT_Draw()
 		}
 		sprite->Draw();
 	}
+
+/*
+
+    // unbatched drawing
+	const int numVecs = s_nodeVecVec.size();
+	for (int i = 1; i < numVecs; ++i) // skip the first vec, which contains the dummy "screen" sprite.
+	{
+		NodeVec* v = s_nodeVecVec[i];
+		const int numSprites = v->size();
+		for (int j = 0; j < numSprites; ++j)
+		{
+			const Sprite* sprite = (*v)[j]->sprite;
+			assert(sprite);
+			const Texture* texture = sprite->GetTexture();
+			GLuint tex = texture->GetTexture();
+			if (curTex != tex)
+			{
+				glBindTexture(GL_TEXTURE_2D, tex);
+				curTex = tex;
+				numTextureBinds++;
+			}
+			sprite->Draw();
+		}
+	}
+*/
 
 #else
 
