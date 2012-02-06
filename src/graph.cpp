@@ -37,6 +37,17 @@ Graph::Graph(Sprite* root)
 	m_maxLevel = 0;
 }
 
+Graph::~Graph()
+{
+	NodeMap::iterator mapIter = m_nodeMap.begin();
+	NodeMap::iterator mapEnd = m_nodeMap.end();
+	for (; mapIter != mapEnd; ++mapIter)
+	{
+		Node* n = mapIter->second;
+        delete n;
+    }
+}
+
 Graph::NodeMap::iterator Graph::FindOrInsertSprite(const Sprite* sprite)
 {
 	NodeMap::iterator mapIter = m_nodeMap.find(sprite);
@@ -60,7 +71,6 @@ void Graph::AddEdge(const Sprite* a, const Sprite* b)
 	Node* nb = mapIterB->second;
 	if (na->level >= nb->level)
 	{
-		//printf("AddEdge %s(%d) -> %s(%d)\n", a->GetName().c_str(), na->level, b->GetName().c_str(), nb->level);
 		na->AddChild(nb);
         m_maxLevel = std::max(m_maxLevel, nb->LevelUp(na->level + 1));
 	}
@@ -84,27 +94,6 @@ void Graph::DumpRec(const Node* n, int indent) const
 
 void Graph::TSort(NodeVecVec& nodeVecVec)
 {
-    /*
-	NodeQueue q;
-	q.push(m_rootIter->second);
-	int numLevels = 0;
-	while (!q.empty())
-	{
-		Node* n = q.front();
-		q.pop();
-		numLevels = n->level + 1;
-
-		NodeList::const_iterator listIter = n->childList.begin();
-		NodeList::const_iterator listEnd = n->childList.end();
-		for(; listIter != listEnd; ++listIter)
-		{
-			Node* m = *listIter;
-			m->level = n->level + 1;
-			q.push(m);
-		}
-	}
-    */
-
 	for (int i = 0; i < m_maxLevel + 1; ++i)
 		nodeVecVec.push_back(new NodeVec());
 

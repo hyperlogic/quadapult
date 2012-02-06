@@ -37,6 +37,7 @@ bool IsPowerOfTwo(int number);
 
 class Sprite;
 void DrawSprites(const Sprite** sprites, size_t numSprites);
+void DrawSpritesBatched(const Sprite** sprites, size_t numSprites);
 
 #ifdef DEBUG
 #define GL_ERROR_CHECK(x) GLErrorCheck(x)

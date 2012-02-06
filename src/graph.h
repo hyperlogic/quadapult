@@ -31,6 +31,8 @@ struct Node {
 
 struct Graph {
 	Graph(Sprite* root);
+    ~Graph();
+
 	void AddEdge(const Sprite* a, const Sprite* b);
 
 	void Dump() const;

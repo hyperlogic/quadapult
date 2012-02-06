@@ -148,7 +148,6 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
 	GLuint curTex = -1;
 	unsigned int numTextureBinds = 0;
 
-#if 0
     // unbatched drawing
     for (unsigned int i = 0; i < numSprites; ++i)
     {
@@ -165,7 +164,15 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
         }
         sprite->Draw();
     }
-#else
+}
+
+void DrawSpritesBatched(const Sprite** sprites, size_t numSprites)
+{
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+	GLuint curTex = -1;
+	unsigned int numTextureBinds = 0;
 
 	// batched drawing
 	unsigned int batchSizeTotal = 0;
@@ -215,7 +222,5 @@ void DrawSprites(const Sprite** sprites, size_t numSprites)
     //printf("numSprites = %lu\n", numSprites);
 	//printf("numBatches = %d\n", numBatches);
 	//printf("avgBatchSize = %.2f\n", (double)batchSizeTotal / numBatches);
-
-#endif
 
 }
