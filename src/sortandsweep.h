@@ -71,6 +71,10 @@ public:
     void FreeAABB(AABB* aabb);
 
 	void Insert(AABB* aabb);
+
+    // TODO:
+    // void UpdateBounds(AABB* aabb);
+
 	void Dump() const;
 	void DumpOverlaps() const;
 

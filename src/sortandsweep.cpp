@@ -120,7 +120,6 @@ void SortAndSweep::DumpOverlaps() const
 	}
 }
 
-
 void SortAndSweep::Insert(AABB* aabb)
 {
 	for (int i = 0; i < 2; ++i)
