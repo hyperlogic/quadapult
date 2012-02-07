@@ -2,8 +2,8 @@
 #define SORTANDSWEEP_H
 
 #include "abaci.h"
-#include <vector>
 #include <utility>
+#include <set>
 
 #define MAX_AABBS 10000
 
@@ -21,8 +21,8 @@ public:
 		void SetMin() { ismax = false; }
 		bool IsMax() const { return ismax; };
 		bool IsMin() const { return !ismax; };
-        AABB* GetAABB() const 
-        { 
+        AABB* GetAABB() const
+        {
             return (AABB*)(ismax ? this - 1 : this);
         }
 	protected:
@@ -71,16 +71,17 @@ public:
     void FreeAABB(AABB* aabb);
 
 	void Insert(AABB* aabb);
+    void UpdateBounds(AABB* aabb);
 
-    // TODO:
-    // void UpdateBounds(AABB* aabb);
+    bool HasOverlapPair(const AABB* a, const AABB* b) const;
+    void DeleteOverlapPair(const AABB* a, const AABB* b);
 
 	void Dump() const;
 	void DumpOverlaps() const;
 
 	typedef std::pair<const AABB*, const AABB*> OverlapPair;
-	typedef std::vector<OverlapPair> OverlapPairVec;
-	const OverlapPairVec& GetOverlapPairVec() const { return m_overlapPairVec; }
+	typedef std::set<OverlapPair> OverlapPairSet;
+    const OverlapPairSet& GetOverlapPairSet() const { return m_overlapPairSet; }
 
 	static bool UnitTest();
 
@@ -97,7 +98,7 @@ protected:
     AABB* m_free;
     size_t m_numFree;
 
-	std::vector<OverlapPair> m_overlapPairVec;
+	OverlapPairSet m_overlapPairSet;
 };
 
 #endif

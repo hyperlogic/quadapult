@@ -30,12 +30,12 @@ Graph* BuildGraph(Sprite* root)
 {
 	Graph* graph = new Graph(root);
 
-	SortAndSweep::OverlapPairVec::const_iterator pairIter = s_sortAndSweep.GetOverlapPairVec().begin();
-	SortAndSweep::OverlapPairVec::const_iterator pairEnd = s_sortAndSweep.GetOverlapPairVec().end();
-	for (; pairIter != pairEnd; ++pairIter)
+	SortAndSweep::OverlapPairSet::const_iterator setIter = s_sortAndSweep.GetOverlapPairSet().begin();
+	SortAndSweep::OverlapPairSet::const_iterator setEnd = s_sortAndSweep.GetOverlapPairSet().end();
+	for (; setIter != setEnd; ++setIter)
 	{
-		const Sprite* a = reinterpret_cast<const Sprite*>(pairIter->first->userPtr);
-		const Sprite* b = reinterpret_cast<const Sprite*>(pairIter->second->userPtr);
+		const Sprite* a = reinterpret_cast<const Sprite*>(setIter->first->userPtr);
+		const Sprite* b = reinterpret_cast<const Sprite*>(setIter->second->userPtr);
 		assert(a && b);
 
 		if (a->GetDepth() < b->GetDepth())
@@ -136,7 +136,7 @@ void QUADAPULT_Init(const char* path)
 		s_sortAndSweep.Insert(spriteBox);
     }
 
-	printf("m_overlapVec.size = %lu\n", s_sortAndSweep.GetOverlapPairVec().size());
+	printf("m_overlapVec.size = %lu\n", s_sortAndSweep.GetOverlapPairSet().size());
 
     Matrixf proj = Matrixf::Ortho(0, WIDTH, HEIGHT, 0, -10, 10);
     glMatrixMode(GL_PROJECTION);

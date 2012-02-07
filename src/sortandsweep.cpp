@@ -4,6 +4,7 @@
 
 #include <list>
 #include <set>
+#include <utility>
 
 #include "sprite.h"  // for debugging
 
@@ -91,7 +92,7 @@ static bool AABBOverlap(const SortAndSweep::AABB* a, const SortAndSweep::AABB* b
 
 void SortAndSweep::AddOverlapPair(const AABB* a, const AABB* b)
 {
-	m_overlapPairVec.push_back(OverlapPair(a, b));
+	m_overlapPairSet.insert(OverlapPair(a, b));
 }
 
 void SortAndSweep::Dump() const
@@ -113,9 +114,11 @@ void SortAndSweep::DumpOverlaps() const
 {
 	printf("SortAndSweep::DumpOverlaps()\n");
 
-	for (int i = 0; i < (int)m_overlapPairVec.size(); ++i)
+    OverlapPairSet::const_iterator setIter = m_overlapPairSet.begin();
+    OverlapPairSet::const_iterator setEnd = m_overlapPairSet.end();
+	for (; setIter != setEnd; ++setIter)
 	{
-		const OverlapPair& p = m_overlapPairVec[i];
+		const OverlapPair& p = *setIter;
 		printf("    %s -> %s\n", ((Sprite*)(p.first->userPtr))->GetName().c_str(), ((Sprite*)(p.second->userPtr))->GetName().c_str());
 	}
 }
@@ -166,11 +169,90 @@ void SortAndSweep::Insert(AABB* aabb)
 	}
 }
 
+static void MoveElement(int i, SortAndSweep::Elem* elem, SortAndSweep::Elem* dst)
+{
+    // Unlink element...
+    elem->prev[i]->next[i] = elem->next[i];
+    elem->next[i]->prev[i] = elem->prev[i];
+    // ...and relink it _after_ the destination element
+    elem->prev[i] = dst;
+    elem->next[i] = dst->next[i];
+    dst->next[i]->prev[i] = elem;
+    dst->next[i] = elem;
+}
+
+void SortAndSweep::UpdateBounds(AABB* aabb)
+{
+    for (int i = 0; i < 2; i++)
+    {
+        Elem* min = &aabb->min;
+        Elem* max = &aabb->max;
+        Elem* t;
+
+        // Try to move min element to the left.
+        // Move the roaming pointer t left for as long as it points to elem with value larger than pMin’s.
+        // While doing so, keep track of the update status of any AABBs passed over.
+        for (t = min->prev[i]; min->value[i] < t->value[i]; t = t->prev[i])
+        {
+            if (t->IsMax() && AABBOverlap(aabb, t->GetAABB()) && !HasOverlapPair(aabb, t->GetAABB()))
+                AddOverlapPair(aabb, t->GetAABB());
+        }
+
+        // If t moves from its original position, move min into new place
+        if (t != min->prev[i])
+            MoveElement(i, min, t);
+
+        // Similarly to above, try to move max element to the right
+        for (t = max->next[i]; max->value[i] > t->value[i]; t = t->next[i])
+        {
+            if (t->IsMin() && AABBOverlap(aabb, t->GetAABB()) && !HasOverlapPair(aabb, t->GetAABB()))
+                AddOverlapPair(aabb, t->GetAABB());
+        }
+
+        if (t != max->next[i])
+            MoveElement(i, max, t->next[i]);
+
+        // Similarly to above, try to move min element to the right
+        for (t = min->next[i]; min->value[i] > t->value[i]; t = t->next[i])
+        {
+            if (t->IsMax() && HasOverlapPair(aabb, t->GetAABB()))
+                DeleteOverlapPair(aabb, t->GetAABB());
+        }
+
+        if (t != min->next[i])
+            MoveElement(i, min, t->prev[i]);
+
+        // Similarly to above, try to move max element to the left
+        for (t = max->prev[i]; max->value[i] < t->value[i]; t = t->prev[i])
+        {
+            if (t->IsMin() && HasOverlapPair(aabb, t->GetAABB()))
+                DeleteOverlapPair(aabb, t->GetAABB());
+        }
+
+        if (t != max->prev[i])
+            MoveElement(i, max, t);
+    }
+}
+
+bool SortAndSweep::HasOverlapPair(const AABB* a, const AABB* b) const
+{
+    return (m_overlapPairSet.find(OverlapPair(a, b)) != m_overlapPairSet.end() ||
+            m_overlapPairSet.find(OverlapPair(b, a)) != m_overlapPairSet.end());
+}
+
+void SortAndSweep::DeleteOverlapPair(const AABB* a, const AABB* b)
+{
+    OverlapPairSet::iterator iter = m_overlapPairSet.find(OverlapPair(a, b));
+    if (iter != m_overlapPairSet.end())
+        m_overlapPairSet.erase(iter);
+}
+
+// UNIT TEST:
+
 struct OverlapCheck
 {
-	void* a;
-	void* b;
-	bool pass;
+    SortAndSweep::AABB* a;
+    SortAndSweep::AABB* b;
 };
 
 bool SortAndSweep::UnitTest()
@@ -194,42 +276,26 @@ bool SortAndSweep::UnitTest()
 	for (int i = 0; i < numBoxes; ++i)
 		ss.Insert(box[i]);
 
-	const int numChecks = 5;
-	static OverlapCheck checks[] = {{(void*)0, (void*)1, false},
-									{(void*)0, (void*)2, false},
-									{(void*)1, (void*)2, false},
-									{(void*)1, (void*)3, false},
-									{(void*)2, (void*)3, false},
-									{(void*)4, (void*)0, false},
-									{(void*)4, (void*)1, false},
-									{(void*)4, (void*)2, false},
-									{(void*)4, (void*)3, false}};
-
-	for (int i = 0; i < (int)ss.m_overlapPairVec.size(); ++i)
-	{
-		OverlapPair& p = ss.m_overlapPairVec[i];
-		for (int j = 0; j < numChecks; ++j)
-		{
-			if (!checks[i].pass &&
-				(p.first->userPtr == checks[j].a && p.second->userPtr == checks[j].b) ||
-				(p.first->userPtr == checks[j].b && p.second->userPtr == checks[j].a))
-			{
-				checks[i].pass = true;
-			}
-		}
-	}
-
+	const int numChecks = 9;
+	static OverlapCheck checks[] = {{box[0], box[1]},
+									{box[0], box[2]},
+									{box[1], box[2]},
+									{box[1], box[3]},
+									{box[2], box[3]},
+									{box[4], box[0]},
+									{box[4], box[1]},
+									{box[4], box[2]},
+									{box[4], box[3]}};
     bool result = true;
-
-	// check
-	for (int i = 0; i < numChecks; ++i)
-	{
-		if (!checks[i].pass) {
-			printf("checks[%d] failed!\n", i);
-			result = false;
+    for (int i = 0; i < numChecks; ++i)
+    {
+        if (!ss.HasOverlapPair(checks[i].a, checks[i].b))
+        {
+            printf("FAIL\n");
+            result = false;
             break;
-		}
-	}
+        }
+    }
 
     // clean up
     for (int i = 0; i < numBoxes; ++i)
